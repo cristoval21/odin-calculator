@@ -10,8 +10,7 @@ body {
   height: 100%;
 }
 
-body,
-.calc-wrapper body {
+body {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,19 +20,23 @@ body,
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: auto;
+}
+
+.display,
+button {
+  border: 2px solid black;
+  background-color: transparent;
+  text-align: center;
+  border-radius: 10px;
+  height: 80px;
 }
 
 .display {
-  display: flex;
-  height: 80px;
-  background-color: black;
-  align-items: center;
   padding: 0 20px;
-  border-radius: 10px;
-}
-
-.display-content {
-  color: white;
+  display: flex;
+  justify-content: start;
+  align-items: center;
 }
 
 .button-wrapper {
@@ -43,17 +46,16 @@ body,
 }
 
 button {
-  border: 1px solid black;
-  background-color: transparent;
-  text-align: center;
   width: 80px;
-  height: 80px;
-  border-radius: 10px;
   font-size: 25px;
 }
 
 button:hover {
   background-color: #f1f1f1;
+}
+
+button:active {
+  background-color: #d1d1d1;
 }
 
 .row {
@@ -62,6 +64,6 @@ button:hover {
 }
 
 #zero,
-#equal {
+.equal {
   flex: 1;
 }

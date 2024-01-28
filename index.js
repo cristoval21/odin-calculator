@@ -1,131 +1,115 @@
-// HTML Elements
-const displayContent = document.querySelector(".display-content");
-const btnZero = document.querySelector("#zero");
-const btnONe = document.querySelector("#one");
-const btnTwo = document.querySelector("#two");
-const btnThree = document.querySelector("#three");
-const btnFour = document.querySelector("#four");
-const btnFive = document.querySelector("#five");
-const btnSix = document.querySelector("#six");
-const btnSeven = document.querySelector("#seven");
-const btnEight = document.querySelector("#eight");
-const btnNine = document.querySelector("#nine");
-const btnAdd = document.querySelector("#add");
-const btnSubtract = document.querySelector("#subtract");
-const btnMultiply = document.querySelector("#multiply");
-const btnDivide = document.querySelector("#divide");
-const btnEqual = document.querySelector("#equal");
-const btnClear = document.querySelector("#clear");
+let firstOperand = null;
+let operator = null;
+let secondOperand = null;
+let shouldResetDisplay = true;
+const display = document.querySelector(".display-content");
+const operators = ["+", "-", "x", "/"];
 
-let num1 = "";
-let operator = "";
-let num2 = "";
-let displayText = "";
-
-// Basic functions
 function add(a, b) {
-  return String(a + b);
+  return a + b;
 }
 
 function subtract(a, b) {
-  return String(a - b);
+  return a - b;
 }
 
 function multiply(a, b) {
-  return String(a * b);
+  return a * b;
 }
 
 function divide(a, b) {
-  return String(a / b);
+  return a / b;
 }
 
 function operate(operator, a, b) {
   a = Number(a);
   b = Number(b);
-  if (operator === "/" && b === 0) {
-    return "Really?";
-  }
 
   switch (operator) {
     case "+":
       return add(a, b);
     case "-":
       return subtract(a, b);
-    case "*":
+    case "x":
       return multiply(a, b);
     case "/":
       return divide(a, b);
   }
 }
 
-function clear() {
-  num1 = "";
-  operator = "";
-  num2 = "";
-  displayText = "";
-  displayContent.textContent = "0";
-}
-
-function updateDisplay(input) {
-  const lastChar = displayText.slice(-1);
-
-  if (input.match(/[^0-9]/g) && lastChar.match(/[^0-9]/g)) {
-    displayText = displayText.replace(/.$/g, input);
+function setOperand(input) {
+  if (display.textContent === "0" || shouldResetDisplay) {
+    display.textContent = input;
   } else {
-    displayText += input;
+    display.textContent += input;
+  }
+
+  if (!operator) {
+    firstOperand = display.textContent;
+  } else {
+    secondOperand = display.textContent
+                           .match(/(\+|-|x|\/)[0-9]+/g)
+                           .toString()
+                           .slice(1);
   }
   
-  displayContent.textContent = displayText;
+  shouldResetDisplay = false;
 }
 
-function storeNumber(input) {
-  if (operator.length === 0) {
-    num1 += input;
+function setOperator(input) {
+  const lastChar = display.textContent.slice(-1);
+
+  if (!operators.includes(lastChar)) {
+    display.textContent += input;
+    operator = input;
   } else {
-    num2 += input;
+    display.textContent = display.textContent.replace(/(\+|-|x|\/)$/g, input);
   }
+
+  shouldResetDisplay = false;
+  operator = input;
 }
 
-function displayResult(op, a, b) {
-  const result = operate(op, a, b);
-  clear();
-  num1 = result;
-  updateDisplay(num1);  
+function setResult(resetDisplay = false) {
+  if (!operator || !secondOperand) {
+    return;
+  }
+
+  const result = operate(operator, firstOperand, secondOperand);
+  display.textContent = result;
+  firstOperand = result;
+  operator = null;
+  secondOperand = null;
+
+  shouldResetDisplay = resetDisplay;
 }
 
-document.addEventListener("click", (e) => {
+function clearAll() {
+  firstOperand = null;
+  operator = null;
+  secondOperand = null;
+  display.textContent = "0";
+  shouldResetDisplay = true;
+}
+
+document.addEventListener("click", e => {
   const target = e.target;
-  switch (target.id) {
-    case "zero":
-    case "one":
-    case "two":
-    case "three":
-    case "four":
-    case "five":
-    case "six":
-    case "seven":
-    case "eight":
-    case "nine":
-      updateDisplay(target.textContent);
-      storeNumber(target.textContent);
+
+  switch (target.className) {
+    case "operand":
+      setOperand(target.textContent);
       break;
-    case "add":
-    case "subtract":
-    case "multiply":
-    case "divide":
-      if (num2) {
-        displayResult(operator, num1, num2)
+    case "operator":
+      if (secondOperand) {
+        setResult();
       }
-      operator = target.textContent;
-      updateDisplay(target.textContent);
+      setOperator(target.textContent);
       break;
     case "equal":
-      if (num2) {
-        displayResult(operator, num1, num2);
-      }
+      setResult(true);
       break;
     case "clear":
-      clear();
+      clearAll();
       break;
   }
 })
