@@ -7,19 +7,19 @@ const display = document.querySelector(".display-content");
 const operators = ["+", "-", "x", "/"];
 
 function add(a, b) {
-  return a + b;
+  return String(a + b);
 }
 
 function subtract(a, b) {
-  return a - b;
+  return String(a - b);
 }
 
 function multiply(a, b) {
-  return a * b;
+  return String(a * b);
 }
 
 function divide(a, b) {
-  return (a / b).toFixed(13);
+  return String((a / b).toFixed(13));
 }
 
 function operate(operator, a, b) {
@@ -104,6 +104,18 @@ function clearAll() {
   canAppendDecimal = true;
 }
 
+function removeChar() {
+  display.textContent = display.textContent.slice(0, display.textContent.length - 1);
+
+  if (secondOperand) {
+    secondOperand = secondOperand.slice(0, secondOperand.length - 1);
+  } else if (operator) {
+    operator = null;
+  } else {
+    firstOperand = firstOperand.slice(0, firstOperand.length - 1);
+  }
+}
+
 document.addEventListener("click", e => {
   const target = e.target;
 
@@ -125,6 +137,9 @@ document.addEventListener("click", e => {
       break;
     case "clear":
       clearAll();
+      break;
+    case "backspace":
+      removeChar();
       break;
   }
 })
