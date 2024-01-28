@@ -2,6 +2,7 @@ let firstOperand = null;
 let operator = null;
 let secondOperand = null;
 let shouldResetDisplay = true;
+let canAppendDecimal = true;
 const display = document.querySelector(".display-content");
 const operators = ["+", "-", "x", "/"];
 
@@ -18,7 +19,7 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
-  return a / b;
+  return (a / b).toFixed(13);
 }
 
 function operate(operator, a, b) {
@@ -48,7 +49,7 @@ function setOperand(input) {
     firstOperand = display.textContent;
   } else {
     secondOperand = display.textContent
-                           .match(/(\+|-|x|\/)[0-9]+/g)
+                           .match(/(\+|-|x|\/).+/g)
                            .toString()
                            .slice(1);
   }
@@ -67,6 +68,7 @@ function setOperator(input) {
   }
 
   shouldResetDisplay = false;
+  canAppendDecimal = true;
   operator = input;
 }
 
@@ -82,6 +84,15 @@ function setResult(resetDisplay = false) {
   secondOperand = null;
 
   shouldResetDisplay = resetDisplay;
+  canAppendDecimal = true;
+}
+
+function appendDecimal() {
+  if (!shouldResetDisplay && canAppendDecimal) {
+    display.textContent += ".";
+  }
+
+  canAppendDecimal = false;
 }
 
 function clearAll() {
@@ -90,6 +101,7 @@ function clearAll() {
   secondOperand = null;
   display.textContent = "0";
   shouldResetDisplay = true;
+  canAppendDecimal = true;
 }
 
 document.addEventListener("click", e => {
@@ -104,6 +116,9 @@ document.addEventListener("click", e => {
         setResult();
       }
       setOperator(target.textContent);
+      break;
+    case "decimal":
+      appendDecimal();
       break;
     case "equal":
       setResult(true);
