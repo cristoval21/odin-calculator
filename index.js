@@ -143,3 +143,25 @@ document.addEventListener("click", e => {
       break;
   }
 })
+
+document.addEventListener("keydown", e => {
+  e.preventDefault();
+  
+  const key = e.key;
+  if (/[0-9]/.test(key)) {
+    setOperand(key);
+  } else if (/\+|-|x|\*|\//.test(key)) {
+    if (secondOperand) {
+      setResult();
+    }
+    setOperator(key === "*" ? "x" : key);
+  } else if (/\./.test(key)) {
+    appendDecimal();
+  } else if (/=/.test(key) || key === "Enter") {
+    setResult(true);
+  } else if (key === "Delete") {
+    clearAll();
+  } else if (key == "Backspace") {
+    removeChar();
+  }
+})
